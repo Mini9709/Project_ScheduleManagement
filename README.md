@@ -190,3 +190,7 @@ Response :
 
 
 ---
+
+# ERD
+
+![ERD 스크린샷](https://github.com/Mini9709/Project_ScheduleManagement/blob/main/ERD.png)
