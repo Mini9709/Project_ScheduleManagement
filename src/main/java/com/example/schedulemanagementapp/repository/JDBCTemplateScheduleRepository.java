@@ -26,9 +26,11 @@ public class JDBCTemplateScheduleRepository implements ScheduleRepository {
     private final JdbcTemplate jdbcTemplate;
 
     public JDBCTemplateScheduleRepository(DataSource dataSource) {
+
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
+    // 데이터베이스에 일정 저장
     @Override
     public ScheduleResponseDto saveSchedule(Schedule schedule) {
 
@@ -44,44 +46,58 @@ public class JDBCTemplateScheduleRepository implements ScheduleRepository {
         parameters.put("contents", schedule.getContents());
 
         Number key = jdbcInsert.executeAndReturnKey(new MapSqlParameterSource(parameters));
+
         return new ScheduleResponseDto(key.longValue(),"Success", "일정 등록 성공.");
     }
 
+    // 데이터베이스에서 전체 일정 출력
     @Override
     public List<ScheduleDataResponseDto> findAllSchedules() {
+
         return jdbcTemplate.query("select * from schedule", ScheduleRowMapper());
     }
 
+    // id에 해당하는 데이터 출력
     @Override
     public ScheduleDataResponseDto findScheduleByIdOrElseThrow(Long id) {
+
         List<ScheduleDataResponseDto> result = jdbcTemplate.query("select * from schedule where schedule_id = ?", ScheduleRowMapper(),id);
+
         return result.stream().findAny().orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, " 해당 아이디가 존재하지 않습니다."));
     }
 
+    // 입력한 패스워드 확인
     @Override
     public String returnPasswordById(Long id) {
+
         return jdbcTemplate.queryForObject("select password from schedule where schedule_id = ?", String.class, id);
     }
 
+    // 데이터베이스에서 데이터 수정
     @Override
     public int updateSchedule(Long id, String name, String contents) {
+
         Date today = new Date();
         SimpleDateFormat todayString = new SimpleDateFormat("yyyy.MM.dd. HH:mm:ss");
+
         return jdbcTemplate.update("update schedule set name = ?, contents = ?, fixed_date = ? where schedule_id = ?", name, contents, todayString.format(today), id);
     }
 
+    // 데이터베이스에서 데이터 삭제
     @Override
     public int deleteSchedule(Long id) {
+
         return jdbcTemplate.update("delete from schedule where schedule_id = ?", id);
     }
 
-
+    // 데이터베이스에서 출력한 데이터 리스트를 알맞은 데이터 형으로 변환
     private RowMapper<ScheduleDataResponseDto> ScheduleRowMapper() {
 
         return new RowMapper<ScheduleDataResponseDto>() {
 
             @Override
             public ScheduleDataResponseDto mapRow(ResultSet rs, int rowNum) throws SQLException {
+
                 return new ScheduleDataResponseDto(
                         rs.getLong("schedule_id"),
                         rs.getString("title"),
