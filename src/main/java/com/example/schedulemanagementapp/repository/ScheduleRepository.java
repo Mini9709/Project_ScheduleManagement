@@ -10,9 +10,14 @@ import java.util.Optional;
 public interface ScheduleRepository {
 
     ScheduleResponseDto saveSchedule(Schedule schedule);
+
     List<ScheduleDataResponseDto> findAllSchedules();
+
     ScheduleDataResponseDto findScheduleByIdOrElseThrow(Long id);
+
     String returnPasswordById(Long id);
+
     int updateSchedule(Long id, String name, String contents);
+
     int deleteSchedule(Long id);
 }

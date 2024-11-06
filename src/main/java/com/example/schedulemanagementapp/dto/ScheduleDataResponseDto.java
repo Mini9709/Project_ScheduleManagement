@@ -16,6 +16,7 @@ public class ScheduleDataResponseDto{
     private String contents;
 
     public ScheduleDataResponseDto(Schedule schedule) {
+
         this.scheduleId = schedule.getScheduleId();
         this.title = schedule.getTitle();
         this.name = schedule.getName();

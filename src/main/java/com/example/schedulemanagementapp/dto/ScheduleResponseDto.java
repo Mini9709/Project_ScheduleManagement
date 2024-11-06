@@ -9,7 +9,6 @@ import lombok.Getter;
 public class ScheduleResponseDto {
 
     private Long scheduleId;
-    // private Long userId;
     private String result;
     private String message;
 
