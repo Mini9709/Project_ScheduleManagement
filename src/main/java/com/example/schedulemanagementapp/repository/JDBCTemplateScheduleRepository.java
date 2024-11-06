@@ -14,6 +14,8 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.sql.DataSource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,7 +44,7 @@ public class JDBCTemplateScheduleRepository implements ScheduleRepository {
         parameters.put("contents", schedule.getContents());
 
         Number key = jdbcInsert.executeAndReturnKey(new MapSqlParameterSource(parameters));
-        return new ScheduleResponseDto(key.longValue(), "Success", "일정 등록 성공");
+        return new ScheduleResponseDto(key.longValue(),"Success", "일정 등록 성공.");
     }
 
     @Override
@@ -53,8 +55,26 @@ public class JDBCTemplateScheduleRepository implements ScheduleRepository {
     @Override
     public ScheduleDataResponseDto findScheduleByIdOrElseThrow(Long id) {
         List<ScheduleDataResponseDto> result = jdbcTemplate.query("select * from schedule where schedule_id = ?", ScheduleRowMapper(),id);
-        return result.stream().findAny().orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, " Does not exists id = " + id));
+        return result.stream().findAny().orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, " 해당 아이디가 존재하지 않습니다."));
     }
+
+    @Override
+    public String returnPasswordById(Long id) {
+        return jdbcTemplate.queryForObject("select password from schedule where schedule_id = ?", String.class, id);
+    }
+
+    @Override
+    public int updateSchedule(Long id, String name, String contents) {
+        Date today = new Date();
+        SimpleDateFormat todayString = new SimpleDateFormat("yyyy.MM.dd. HH:mm:ss");
+        return jdbcTemplate.update("update schedule set name = ?, contents = ?, fixed_date = ? where schedule_id = ?", name, contents, todayString.format(today), id);
+    }
+
+    @Override
+    public int deleteSchedule(Long id) {
+        return jdbcTemplate.update("delete from schedule where schedule_id = ?", id);
+    }
+
 
     private RowMapper<ScheduleDataResponseDto> ScheduleRowMapper() {
 
@@ -63,10 +83,11 @@ public class JDBCTemplateScheduleRepository implements ScheduleRepository {
             @Override
             public ScheduleDataResponseDto mapRow(ResultSet rs, int rowNum) throws SQLException {
                 return new ScheduleDataResponseDto(
+                        rs.getLong("schedule_id"),
                         rs.getString("title"),
+                        rs.getString("name"),
                         rs.getString("fixed_date"),
                         rs.getString("registered_date"),
-                        rs.getString("name"),
                         rs.getString("contents")
                 );
             }
