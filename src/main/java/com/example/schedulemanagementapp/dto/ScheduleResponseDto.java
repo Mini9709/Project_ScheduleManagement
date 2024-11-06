@@ -12,4 +12,9 @@ public class ScheduleResponseDto {
     // private Long userId;
     private String result;
     private String message;
+
+    public ScheduleResponseDto(String result, String message) {
+        this.result = result;
+        this.message = message;
+    }
 }
