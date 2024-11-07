@@ -2,6 +2,7 @@ package com.example.schedulemanagementapp.repository;
 
 import com.example.schedulemanagementapp.dto.ScheduleDataResponseDto;
 import com.example.schedulemanagementapp.dto.ScheduleResponseDto;
+import com.example.schedulemanagementapp.entity.Paging;
 import com.example.schedulemanagementapp.entity.Schedule;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
@@ -97,6 +98,21 @@ public class JDBCTemplateScheduleRepository implements ScheduleRepository {
     public int deleteSchedule(Long id) {
 
         return jdbcTemplate.update("delete from schedule where schedule_id = ?", id);
+    }
+
+    // 페이지에 따라 데이터 출력
+    @Override
+    public List<ScheduleDataResponseDto> pagingList(int page, int size) {
+
+        Paging paging = new Paging();
+        paging.handlePaging(page, size);
+
+        if (paging.getEndpage() > jdbcTemplate.queryForObject("select count(*) from schedule", Integer.class)) {
+
+            return jdbcTemplate.query("select * from schedule limit ?, ?", ScheduleRowMapper(), paging.getEndpage(), 1);
+        }
+
+        return jdbcTemplate.query("select * from schedule limit ?, ?", ScheduleRowMapper(), paging.getStartpage(), paging.getSize());
     }
 
     // 데이터베이스에서 출력한 데이터 리스트를 알맞은 데이터 형으로 변환

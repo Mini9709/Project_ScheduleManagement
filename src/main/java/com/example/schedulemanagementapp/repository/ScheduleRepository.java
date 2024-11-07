@@ -20,4 +20,6 @@ public interface ScheduleRepository {
     int updateSchedule(Long id, String name, String contents);
 
     int deleteSchedule(Long id);
+
+    List<ScheduleDataResponseDto> pagingList(int page, int size);
 }

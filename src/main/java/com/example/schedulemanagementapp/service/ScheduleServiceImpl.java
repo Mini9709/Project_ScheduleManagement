@@ -91,4 +91,16 @@ public class ScheduleServiceImpl implements ScheduleService {
 
         return new ScheduleResponseDto(id, "Success", "일정 삭제 성공.");
     }
+
+    // 페이지 기능
+    @Override
+    public List<ScheduleDataResponseDto> pagingList(int page, int size) {
+
+        // 페이지 및 사이즈 값이 잘못되면 오류 메시지 출력
+        if (page < 1 || size < 1) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "잘못된 주소입니다.");
+        }
+
+        return scheduleRepository.pagingList(page, size);
+    }
 }

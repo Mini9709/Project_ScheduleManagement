@@ -62,4 +62,13 @@ public class ScheduleController {
         return new ResponseEntity<>(scheduleService.deleteSchedule(id, dto.getPassword()), HttpStatus.OK);
     }
 
+    @GetMapping("/pages/{page}/size/{size}")
+    public ResponseEntity<List<ScheduleDataResponseDto>> pagingList(
+            @PathVariable Integer page,
+            @PathVariable Integer size
+    ) {
+
+        return new ResponseEntity<>(scheduleService.pagingList(page, size), HttpStatus.OK);
+    }
+
 }

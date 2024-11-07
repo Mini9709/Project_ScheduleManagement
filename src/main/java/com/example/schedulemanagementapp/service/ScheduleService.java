@@ -17,4 +17,6 @@ public interface ScheduleService {
     ScheduleResponseDto updateSchedule(Long id, String name, String contents, String password);
 
     ScheduleResponseDto deleteSchedule(Long id, String password);
+
+    List<ScheduleDataResponseDto> pagingList(int page, int size);
 }
