@@ -43,7 +43,7 @@ public class JDBCTemplateScheduleRepository implements ScheduleRepository {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("title", schedule.getTitle());
         parameters.put("user_id", schedule.getUserId());
-        parameters.put("name", jdbcTemplate.queryForObject("select name from user where user_id = ?", String.class, 1));
+        parameters.put("name", jdbcTemplate.queryForObject("select name from user where user_id = ?", String.class, schedule.getUserId()));
         parameters.put("fixed_date", schedule.getFixedDate());
         parameters.put("registered_date", schedule.getRegisteredDate());
         parameters.put("password", schedule.getPassword());
