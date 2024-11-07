@@ -85,7 +85,7 @@ public class JDBCTemplateUserRepository implements UserRepository{
         Date today = new Date();
         SimpleDateFormat todayString = new SimpleDateFormat("yyyy.MM.dd. HH:mm:ss");
 
-        return jdbcTemplate.update("update user set name = ?, email = ?, fixed_date = ? where user_id = ?", name, email, todayString.format(today),id);
+        return jdbcTemplate.update("update user set name = ?, email = ?, fixed_date = ? where user_id = ?", name, email, todayString.format(today), id);
     }
 
     // 데이터베이스에 데이터 삭제
