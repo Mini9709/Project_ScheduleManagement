@@ -27,7 +27,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 
         Schedule schedule = new Schedule(
                 dto.getTitle(),
-                dto.getName(),
+                dto.getUserId(),
                 dto.getPassword(),
                 dto.getContents()
         );
