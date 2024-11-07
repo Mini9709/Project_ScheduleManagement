@@ -11,7 +11,7 @@ import java.util.Date;
 public class Schedule {
 
     private Long scheduleId;
-    //private Long userId;
+    private Long userId;
     private String title;
     private String fixedDate;
     private String registeredDate;
@@ -19,10 +19,10 @@ public class Schedule {
     private String password;
     private String contents;
 
-    public Schedule(String title, String name, String password, String contents) {
+    public Schedule(String title, Long userId, String password, String contents) {
 
         this.title = title;
-        this.name = name;
+        this.userId = userId;
         this.password = password;
         this.contents = contents;
 
