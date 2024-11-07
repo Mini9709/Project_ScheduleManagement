@@ -57,7 +57,7 @@ public class ScheduleController {
     @DeleteMapping("/{id}")
     public ResponseEntity<ScheduleResponseDto> deleterSchedule(
             @PathVariable Long id,
-            @RequestBody @Valid ScheduleRequestDto dto
+            @RequestBody ScheduleRequestDto dto
     ) {
 
         return new ResponseEntity<>(scheduleService.deleteSchedule(id, dto.getPassword()), HttpStatus.OK);
