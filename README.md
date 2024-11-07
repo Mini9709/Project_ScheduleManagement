@@ -192,4 +192,4 @@ Response :
 
 # ERD
 
-![ERD 스크린샷](https://github.com/Mini9709/Project_ScheduleManagement/blob/main/ERD.png)
+![ERD 스크린샷](https://github.com/Mini9709/Project_ScheduleManagement/blob/main/ScheduleManageMent_ERD.png)
