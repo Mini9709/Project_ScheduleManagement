@@ -4,6 +4,8 @@ import com.example.schedulemanagementapp.entity.Schedule;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.util.List;
+
 @Getter
 @AllArgsConstructor
 public class ScheduleDataResponseDto{
@@ -24,5 +26,4 @@ public class ScheduleDataResponseDto{
         this.registerdDate = schedule.getRegisteredDate();
         this.contents = schedule.getContents();
     }
-
 }
