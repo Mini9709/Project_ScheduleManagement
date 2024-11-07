@@ -2,6 +2,7 @@ package com.example.schedulemanagementapp.controller;
 
 import com.example.schedulemanagementapp.dto.*;
 import com.example.schedulemanagementapp.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +22,7 @@ public class UserController {
 
     // 유저 등록
     @PostMapping
-    public ResponseEntity<UserResponseDto> createUser(@RequestBody UserRequestDto dto) {
+    public ResponseEntity<UserResponseDto> createUser(@RequestBody @Valid UserRequestDto dto) {
 
         return new ResponseEntity<>(userService.saveUser(dto), HttpStatus.CREATED);
     }
@@ -51,7 +52,7 @@ public class UserController {
     @PatchMapping("/{id}")
     public ResponseEntity<UserResponseDto> updateUser(
             @PathVariable Long id,
-            @RequestBody UserRequestDto dto
+            @RequestBody @Valid UserRequestDto dto
     ) {
 
         return new ResponseEntity<>(userService.updateUser(id, dto.getName(), dto.getEmail()), HttpStatus.OK);
