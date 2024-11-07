@@ -45,6 +45,7 @@ public class UserServiceImpl implements UserService{
         return userRepository.findUserByIdOrElseThrow(id);
     }
 
+    // 유저 일정 조회
     @Override
     public List<ScheduleDataResponseDto> findUserScheduleById(Long id) {
 
