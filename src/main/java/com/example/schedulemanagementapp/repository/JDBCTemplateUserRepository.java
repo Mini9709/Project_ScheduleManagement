@@ -65,10 +65,17 @@ public class JDBCTemplateUserRepository implements UserRepository{
         return result.stream().findAny().orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "해당 아이디가 존재하지 않습니다."));
     }
 
+    // id에 해당하는 유저의 일정 출력
     @Override
     public List<ScheduleDataResponseDto> findUserScheduleByIdOrElseThrow(Long id) {
 
-        return jdbcTemplate.query("select * from schedule where user_id = ?", ScheduleRowMapper(), id);
+        List<ScheduleDataResponseDto> result = jdbcTemplate.query("select * from schedule where user_id = ?", ScheduleRowMapper(), id);
+
+        if (result.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "해당 유저가 존재하지 않습니다.");
+        }
+
+        return result;
     }
 
     //// 데이터베이스에 데이터 수정
@@ -84,6 +91,8 @@ public class JDBCTemplateUserRepository implements UserRepository{
     // 데이터베이스에 데이터 삭제
     @Override
     public int deleteUser(Long id) {
+
+        jdbcTemplate.update("delete from schedule where user_id = ?", id);
 
         return jdbcTemplate.update("delete from user where user_id = ?", id);
     }
