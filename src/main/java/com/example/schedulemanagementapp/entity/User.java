@@ -2,7 +2,6 @@ package com.example.schedulemanagementapp.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.springframework.data.relational.core.mapping.MappedCollection;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
