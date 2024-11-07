@@ -63,12 +63,7 @@ public class ScheduleServiceImpl implements ScheduleService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "이름이나 내용이 입력되지 않았습니다.");
         }
 
-        int updateRow = scheduleRepository.updateSchedule(id, name, contents);
-
-        // 해당 아이디가 존재하지 않을 경우, 오류 메시지 출력
-        if (updateRow == 0) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "해당 아이디가 존재하지 않습니다.");
-        }
+        scheduleRepository.updateSchedule(id, name, contents);
 
         return new ScheduleResponseDto(id,"Success", "일정 수정 성공.");
     }
@@ -98,7 +93,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 
         // 페이지 및 사이즈 값이 잘못되면 오류 메시지 출력
         if (page < 1 || size < 1) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "잘못된 주소입니다.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "잘못된 페이지 설정입니다.");
         }
 
         return scheduleRepository.pagingList(page, size);

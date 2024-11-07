@@ -36,26 +36,25 @@ public class JDBCTemplateScheduleRepository implements ScheduleRepository {
     @Override
     public ScheduleResponseDto saveSchedule(Schedule schedule) {
 
-        String name;
+        Number key;
         SimpleJdbcInsert jdbcInsert = new SimpleJdbcInsert(jdbcTemplate);
         jdbcInsert.withTableName("schedule").usingGeneratedKeyColumns("schedule_id");
-
-        try {
-            name = jdbcTemplate.queryForObject("select name from user where user_id = ?", String.class, 1);
-        } catch (EmptyResultDataAccessException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "잘못된 입력입니다.");
-        }
 
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("title", schedule.getTitle());
         parameters.put("user_id", schedule.getUserId());
-        parameters.put("name", name);
+        parameters.put("name", jdbcTemplate.queryForObject("select name from user where user_id = ?", String.class, 1));
         parameters.put("fixed_date", schedule.getFixedDate());
         parameters.put("registered_date", schedule.getRegisteredDate());
         parameters.put("password", schedule.getPassword());
         parameters.put("contents", schedule.getContents());
 
-        Number key = jdbcInsert.executeAndReturnKey(new MapSqlParameterSource(parameters));
+        // 해당 아이디가 존재하지 않을 경우, 오류 메시지 출력
+        try {
+            key = jdbcInsert.executeAndReturnKey(new MapSqlParameterSource(parameters));
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, " 해당 아이디가 유효하지 않습니다.");
+        }
 
         return new ScheduleResponseDto(key.longValue(),"Success", "일정 등록 성공.");
     }
@@ -73,14 +72,19 @@ public class JDBCTemplateScheduleRepository implements ScheduleRepository {
 
         List<ScheduleDataResponseDto> result = jdbcTemplate.query("select * from schedule where schedule_id = ?", ScheduleRowMapper(),id);
 
-        return result.stream().findAny().orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, " 해당 아이디가 존재하지 않습니다."));
+        return result.stream().findAny().orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, " 해당 일정이 존재하지 않습니다."));
     }
 
     // 입력한 패스워드 확인
     @Override
     public String returnPasswordById(Long id) {
 
-        return jdbcTemplate.queryForObject("select password from schedule where schedule_id = ?", String.class, id);
+        // 해당 아이디가 존재하지 않을 경우, 오류 메시지 출력
+        try {
+            return jdbcTemplate.queryForObject("select password from schedule where schedule_id = ?", String.class, id);
+        } catch (EmptyResultDataAccessException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, " 해당 일정이 존재하지 않습니다.");
+        }
     }
 
     // 데이터베이스에서 데이터 수정
