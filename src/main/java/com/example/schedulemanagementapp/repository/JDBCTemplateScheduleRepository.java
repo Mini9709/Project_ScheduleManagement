@@ -3,6 +3,7 @@ package com.example.schedulemanagementapp.repository;
 import com.example.schedulemanagementapp.dto.ScheduleDataResponseDto;
 import com.example.schedulemanagementapp.dto.ScheduleResponseDto;
 import com.example.schedulemanagementapp.entity.Schedule;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -34,12 +35,20 @@ public class JDBCTemplateScheduleRepository implements ScheduleRepository {
     @Override
     public ScheduleResponseDto saveSchedule(Schedule schedule) {
 
+        String name;
         SimpleJdbcInsert jdbcInsert = new SimpleJdbcInsert(jdbcTemplate);
         jdbcInsert.withTableName("schedule").usingGeneratedKeyColumns("schedule_id");
 
+        try {
+            name = jdbcTemplate.queryForObject("select name from user where user_id = ?", String.class, 1);
+        } catch (EmptyResultDataAccessException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "잘못된 입력입니다.");
+        }
+
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("title", schedule.getTitle());
-        parameters.put("name", schedule.getName());
+        parameters.put("user_id", schedule.getUserId());
+        parameters.put("name", name);
         parameters.put("fixed_date", schedule.getFixedDate());
         parameters.put("registered_date", schedule.getRegisteredDate());
         parameters.put("password", schedule.getPassword());
