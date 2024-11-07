@@ -4,6 +4,7 @@ import com.example.schedulemanagementapp.dto.ScheduleDataResponseDto;
 import com.example.schedulemanagementapp.dto.ScheduleRequestDto;
 import com.example.schedulemanagementapp.dto.ScheduleResponseDto;
 import com.example.schedulemanagementapp.service.ScheduleService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,7 +24,7 @@ public class ScheduleController {
 
     // 일정 작성
     @PostMapping
-    public ResponseEntity<ScheduleResponseDto> createSchedule(@RequestBody ScheduleRequestDto dto) {
+    public ResponseEntity<ScheduleResponseDto> createSchedule(@RequestBody @Valid ScheduleRequestDto dto) {
 
         return new ResponseEntity<>(scheduleService.saveSchedule(dto), HttpStatus.CREATED);
     }
@@ -46,7 +47,7 @@ public class ScheduleController {
     @PatchMapping("/{id}")
     public ResponseEntity<ScheduleResponseDto> updateSchedule(
             @PathVariable Long id,
-            @RequestBody ScheduleRequestDto dto
+            @RequestBody @Valid ScheduleRequestDto dto
     ) {
 
         return new ResponseEntity<>(scheduleService.updateSchedule(id, dto.getName(), dto.getContents(), dto.getPassword()), HttpStatus.OK);
@@ -56,19 +57,18 @@ public class ScheduleController {
     @DeleteMapping("/{id}")
     public ResponseEntity<ScheduleResponseDto> deleterSchedule(
             @PathVariable Long id,
-            @RequestBody ScheduleRequestDto dto
+            @RequestBody @Valid ScheduleRequestDto dto
     ) {
 
         return new ResponseEntity<>(scheduleService.deleteSchedule(id, dto.getPassword()), HttpStatus.OK);
     }
 
-    @GetMapping("/pages/{page}/size/{size}")
+    @GetMapping("/pages")
     public ResponseEntity<List<ScheduleDataResponseDto>> pagingList(
-            @PathVariable Integer page,
-            @PathVariable Integer size
+            @RequestParam Integer page,
+            @RequestParam Integer size
     ) {
 
         return new ResponseEntity<>(scheduleService.pagingList(page, size), HttpStatus.OK);
     }
-
 }
