@@ -69,13 +69,13 @@ public class JDBCTemplateUserRepository implements UserRepository{
     @Override
     public List<ScheduleDataResponseDto> findUserScheduleByIdOrElseThrow(Long id) {
 
-        List<ScheduleDataResponseDto> result = jdbcTemplate.query("select * from schedule where user_id = ?", ScheduleRowMapper(), id);
+        List<UserDataResponseDto> result = jdbcTemplate.query("select * from user where user_id = ?", UserRowMapper(), id);
 
         if (result.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "해당 유저가 존재하지 않습니다.");
         }
 
-        return result;
+        return jdbcTemplate.query("select * from schedule where user_id = ?", ScheduleRowMapper(), id);
     }
 
     //// 데이터베이스에 데이터 수정
