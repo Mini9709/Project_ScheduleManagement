@@ -37,13 +37,20 @@ public class JDBCTemplateScheduleRepository implements ScheduleRepository {
     public ScheduleResponseDto saveSchedule(Schedule schedule) {
 
         Number key;
+        String name;
         SimpleJdbcInsert jdbcInsert = new SimpleJdbcInsert(jdbcTemplate);
         jdbcInsert.withTableName("schedule").usingGeneratedKeyColumns("schedule_id");
+
+        try {
+            name = jdbcTemplate.queryForObject("select name from user where user_id = ?", String.class, schedule.getUserId());
+        } catch (EmptyResultDataAccessException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, " 해당 아이디가 유효하지 않습니다.");
+        }
 
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("title", schedule.getTitle());
         parameters.put("user_id", schedule.getUserId());
-        parameters.put("name", jdbcTemplate.queryForObject("select name from user where user_id = ?", String.class, schedule.getUserId()));
+        parameters.put("name", name);
         parameters.put("fixed_date", schedule.getFixedDate());
         parameters.put("registered_date", schedule.getRegisteredDate());
         parameters.put("password", schedule.getPassword());
@@ -53,7 +60,7 @@ public class JDBCTemplateScheduleRepository implements ScheduleRepository {
         try {
             key = jdbcInsert.executeAndReturnKey(new MapSqlParameterSource(parameters));
         } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, " 해당 아이디가 유효하지 않습니다.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, " 해당 아이디가 유효하지 않습니다.");
         }
 
         return new ScheduleResponseDto(key.longValue(),"Success", "일정 등록 성공.");
@@ -111,10 +118,11 @@ public class JDBCTemplateScheduleRepository implements ScheduleRepository {
         Paging paging = new Paging();
         paging.handlePaging(page, size);
 
-        if (paging.getEndpage() > jdbcTemplate.queryForObject("select count(*) from schedule", Integer.class)) {
-
-            return jdbcTemplate.query("select * from schedule limit ?, ?", ScheduleRowMapper(), paging.getEndpage(), 1);
-        }
+//        끝 페이지만 초과해도 빈 배열을 리턴하는 로직. 해당 로직은 보류
+//        if (paging.getEndpage() > jdbcTemplate.queryForObject("select count(*) from schedule", Integer.class)) {
+//
+//            return jdbcTemplate.query("select * from schedule limit ?, ?", ScheduleRowMapper(), paging.getEndpage(), 1);
+//        }
 
         return jdbcTemplate.query("select * from schedule limit ?, ?", ScheduleRowMapper(), paging.getStartpage(), paging.getSize());
     }
